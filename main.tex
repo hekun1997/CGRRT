@@ -1,0 +1,339 @@
+\documentclass[smallcondensed]{svjour3}     % onecolumn (ditto)
+\usepackage[misc]{ifsym}
+\smartqed  % flush right qed marks, e.g. at end of proof
+%
+\usepackage{graphicx}
+
+\journalname{Information Science}
+
+\usepackage{epsfig}
+\usepackage{epstopdf}
+\usepackage{url,overcite}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+\usepackage{subfigure}
+\usepackage[colorlinks,linkcolor=blue,citecolor=blue,anchorcolor=black,urlcolor=blue]{hyperref}
+\usepackage[doipre={DOI:}]{uri}
+\usepackage{booktabs}
+\usepackage{threeparttable}
+\usepackage{graphicx}
+\usepackage{epsfig}
+\usepackage{mathtools}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{enumerate}
+\usepackage{bm}
+\usepackage{xcolor}
+
+\usepackage[all]{hypcap}
+
+\usepackage[numbers]{natbib}
+\usepackage{amsfonts}
+
+\begin{document}
+
+\title{Boosting RRT* with GAN Predictions}
+
+\author{Kun He and Fan Min*\thanks{Corresponding author. E-mail: minfan@swpu.edu.cn (Fan Min).} }
+
+\institute{
+Kun He\\
+School of Computer Science, Southwest Petroleum University, Chengdu 610500, PR China\\
+\email{hk20201008@163.com}\\
+\\
+Fan Min\\
+School of Computer Science, Southwest Petroleum University, Chengdu 610500, PR China\\
+\email{minfan@swpu.edu.cn}
+}
+\date{Received: date / Accepted: date}
+% The correct dates will be entered by the editor
+
+\maketitle
+
+\begin{abstract}
+Path planning is a crucial task in robotics.
+Sampling-based algorithms have garnered significant attention for this purpose. 
+However, traditional sampling-based algorithms suffer from poor initial path quality and low efficiency. 
+In this paper, we present a new learning-based path planning method. 
+First, we utilize a generative adversarial network to learn from previous successful planning experiences
+Second, use it to restrict the sampling area in a new map. 
+We then employ RRT* to generate a better initial path by performing path planning within this restricted area. 
+We propose a total of 20 maps, each with varying complexities. 
+Out of these, 16 are used for training and testing, while the remaining 4 are used to test the proposed method's generalization ability. 
+We compare our approach with three state-of-the-art methods.
+The results demonstrate that our method outperforms them in both path quality and convergence speed.
+\keywords{Sampling-based path planning \and Optimal path planning \and GANs}
+\end{abstract}
+
+\section{Introduction}\label{sec:introduction}
+Robot path planning refers to finding a safe and feasible path for the robot in a given map state space, so that the robot can reach the target position from the starting point. 
+According to the nature of the method, common robot path planning algorithms can be divided into the following categories:
+
+Grid-based path planning algorithms: These algorithms usually divide the map into a grid graph, and then use the shortest path search algorithm to find the optimal path. 
+For example Dijkstra's algorithm \cite{dijkstra1959note}, A* \cite{hart1968formal}, D* algorithms. 
+This type of method transforms the path planning problem into a path search problem in the graph, and the efficiency of this type of algorithm is related to the path quality and the resolution of the grid division.
+
+Bionic-based path planning algorithms: These algorithms typically use biological information to explore maps to guide robot path planning. 
+Such as genetic algorithm, particle swarm algorithm, ant colony algorithm. 
+These algorithms are simple to implement, but require multiple iterations to obtain suboptimal paths, and are prone to getting stuck in local minima.
+
+Sampling-based path planning algorithms: These algorithms usually use random sampling to explore the map, use a tree or graph to store path information, and then use the shortest path search to get the final path. 
+For example Rapidly Exploring Random Tree (RRT) \cite{lavalle2001rapidly}, Rapidly Exploring Random Tree-star (RRT*) \cite{karaman2011sampling}, Probabilistic Roadmap (PRM) \cite{kuffner2000randomized}. 
+This type of algorithm is fast, but it is usually difficult to obtain the optimal path.
+
+Rapidly Exploring Random Tree (RRT) is a popular algorithm in robot path planning. 
+RRT is a very effective path planning algorithm that can cope with various complex environments. 
+And it is easy to extend to high-dimensional space and add dynamic constraints, and more importantly, it guarantees probabilistic completeness.
+However, the quality of the initial paths obtained by RRT is poor because it is prone to unnecessarily long paths or zigzag paths. 
+To address this issue, researchers have developed several variants of the RRT algorithm, such as RRT*. 
+It is an improvement over the basic RRT algorithm. 
+RRT* adds neighbor search and rerouting to ensure asymptotically optimal path quality. 
+In short, RRT* optimizes the existing paths while exploring the space, thus ensuring asymptotic optimality. 
+But to obtain high-quality paths means more iterations are needed, which means that RRT* cannot achieve a balance between path quality and efficiency.
+
+To alleviate this shortcoming, we propose a path planning method based on Generative Adversarial Networks.
+Our algorithm speeds up path planning by constraining the search space. 
+First, our model is trained using successful planning experience to obtain a path planner. 
+Subsequently, the restricted sampling area is predicted using the trained planner. 
+Finally, a sampling-based approach is used to sample over the region. 
+The restricted sampling area can avoid RRT* blind search, thus speeding up the sampling process and obtaining better initial paths.
+
+Our contributions are summarized as follows:
+\begin{enumerate}[1)]
+	\item A new path planning method is proposed.
+	\item A new path planner is proposed.
+	\item A new path planning dataset is proposed and the feasibility of our scheme is verified.
+\end{enumerate}
+
+\section{Related work}\label{section: related-work}
+In the past few years, there have been many research works dedicated to improving the performance of RRT algorithms.
+RRT-connect proposes a new way to iterate over tree nodes. 
+It uses the start and end points as the root nodes of the two trees, respectively, and alternately iteratively explores the state space until the two trees meet.
+The efficiency of RRT-connect exploration of state space has been significantly improved, but the path it generates still needs to be optimized.
+Informed-RRT* uses the same iteration and optimization strategy as RRT*.
+However, IRRT* implements heuristic search for ellipses, which makes IRRT* converge faster.
+
+In terms of improving the RRT algorithm, there are a series of research works dedicated to improving the path quality.
+
+Using deep learning models to improve the performance of RRT is a promising direction.
+
+\section{Preliminaries}\label{section: Preliminaries}
+In this section, we briefly introduce the related concepts of path planning, the Markov clustering algorithm, and RRT*.
+
+\subsection{Path Planning Problem}\label{subsection: path planning problem}
+The data model of the path planning problem can be represented by a 5-tuple:
+\begin{equation}\label{equation: model}
+(\bm{\chi}, \bm{\chi}_{\textrm{obs}}, x_{\textrm{sou}}, x_{\textrm{tar}}, r),
+\end{equation}
+where
+\begin{enumerate}[1)]
+	\item $\bm{\chi} \subset \mathbb{R}^n$ is the \emph{state space}, usually $n \in \{2, 3\}$;
+	\item $\bm{\chi}_{\textrm{obs}} \subset \bm{\chi}$ is the \emph{obstacle state space};
+	\item $x_{\textrm{sou}} \in \bm{\chi} \setminus \bm{\chi}_{\textrm{obs}}$ is the \emph{source};
+	\item $x_{\textrm{tar}} \in \bm{\chi} \setminus \bm{\chi}_{\textrm{obs}}$ is the \emph{target};
+	\item $r$ is the radius of the \emph{target}.
+\end{enumerate}
+
+Moreover, $\bm{\chi}_{\textrm{fre}} = \bm{\chi} \setminus \bm{\chi}_{\textrm{obs}}$ is the \emph{obstacle-free state space}.
+Let $\bm{\chi}_{\textrm{tar}} = \{x \in \bm{\chi}_{\textrm{fre}} \vert \lVert x - x_{\textrm{tar}} \rVert < r\}$ be the \emph{target} space.
+The path planning problem is to find an \emph{obstacle-free feasible continuous path} $\bm{\sigma} \subset \bm{\chi}_{\textrm{fre}}$ from $x_{\textrm{sou}}$ to any $x \in \bm{\chi}_{\textrm{tar}}$.
+That is, we only need to reach the neighborhood of $x_{\textrm{tar}}$.
+The path is defined as a sequence
+\begin{equation}\label{equation: path}
+	\bm{\sigma} = \sigma_0 \sigma_1 \dots \sigma_m,
+\end{equation}
+where $\sigma_0 = x_{\textrm{sou}}$, $\sigma_m \in \bm{\chi}_{\textrm{tar}}$,
+$\forall \lambda \in [0, 1], \lambda \sigma_i + (1 - \lambda)\sigma_{i - 1} \in \bm{\chi}_{\textrm{fre}} (i = 1, 2, \dots, m)$, and
+	the direct connection between $\sigma_i$ and $\sigma_{i - 1}$ is obstacle-free.
+In other words, the path is essentially a polyline in the map.
+
+The cost of the path is defined as the length of the polyline, i.e.,
+\begin{equation}\label{equation: path-cost}
+	c(\bm{\sigma}) = \sum_{i=1}^{m} \lVert \sigma_i - \sigma_{i - 1} \rVert,
+\end{equation}
+where $\lVert \cdot \rVert$ is the $l_2$ norm of a vector.
+
+The path planning problem is to find an optimal path
+\begin{equation}\label{equation: optimal-path}
+	\bm{\sigma}^* = \mathop{\arg\min} \limits_{\bm{\sigma}} c(\bm{\sigma}).
+\end{equation}
+
+\subsection{RRT*}\label{subsection: rrt-star}
+Among the sampling-based algorithms, RRT* is one of the representative algorithms that are widely used.
+RRT* explores the \emph{state space} by expanding space-filling trees
+\begin{equation}\label{equation: space-filling trees}
+	T = (\mathbf{N}, r, p)
+\end{equation}
+where
+\begin{enumerate}[1)]
+	\item $\mathbf{N}$ is the set of all nodes in the tree;
+	\item $r \in \mathbf{N}$ is the root node;
+	\item $p: \mathbf{N} \to \mathbf{N} \cup \{\phi\}$ is the parent mapping satisfying
+	\begin{enumerate}[a)]
+		\item $p(r) = \phi$;
+		\item $\forall n \in \mathbf{N}, \exists ! \ i \geq 0, \textrm{s.t. } p^{(i)}(n) =r$;
+		\item $\phi$ represents the empty node.
+	\end{enumerate}
+\end{enumerate}
+
+\section{The proposed algorithm}
+In this section, we first describe the implementation of CGRRT.
+Then, we prove the probabilistic completeness of CGRRT.
+
+\subsection{dateset}
+We generated 20 maps with different complexity, and expanded the original dataset to 200 maps after translation and rotation of obstacles in the maps. 
+By randomly selecting the start and end points in the map, and then using RRT to perform 50 random iterations in this state space, collecting paths that successfully connect the start and end points constitutes a promising region between the start and end points.
+
+\subsection{network structure}
+\subsection{Dataset}
+\begin{figure}
+\centering
+\includegraphics[scale=0.3]{network-CGGenerator.pdf}%%%%%%%%%%%%%%%%scale=缩小比例，或者用width=2in
+\caption{generator}     
+\label{fig:generator}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.4]{network-CGDiscriminator.pdf}%%%%%%%%%%%%%%%%scale=缩小比例，或者用width=2in
+\caption{discriminator}     
+\label{fig:discriminator}
+\end{figure}
+
+
+\subsubsection{GAN}
+Generative Adversarial Networks (GANs) are a class of deep learning models that have received a lot of attention in recent years due to their ability to generate high-quality synthetic images and other media. 
+
+GAN consists of two neural networks: a generator network and a discriminator network. 
+The generator network is trained to synthesize new data samples similar to a given training dataset, while the discriminator network is trained to distinguish real samples from fake samples.
+The training process of GANs involves an adversarial game between the generator and discriminator networks. 
+Specifically, the generator network is trained to generate samples that are as realistic as possible, while the discriminator network is trained to correctly classify samples as real or fake. 
+
+The generator and discriminator networks are trained alternately, with the generator network trying to fool the discriminator, and the discriminator network trying to classify the samples correctly.
+A key challenge in training GANs is balancing the performance of the generator and discriminator networks. 
+
+If the generator network is too weak, it will not be able to synthesize real samples, and if the discriminator network is too weak, it will not be able to effectively distinguish real samples from fake samples. 
+To solve this problem, GANs use specific objective and loss functions to guide the training process.
+The objective function of GAN is usually defined as a min-max game, where the generator network tries to minimize the loss function, while the discriminator network tries to maximize the loss function.
+The loss function is usually defined as binary cross-entropy loss, which measures the difference between the predicted label (true or fake) and the ground truth label.
+
+\subsubsection{Loss Function}
+
+
+\subsection{GAN-RRT*}
+In this study, we feed the map as an RGB image into a trained CycleGan to predict regions with a high probability of success. 
+The purpose is to mitigate the poor quality and inefficiency of the RRT* algorithm when it first finds a path. 
+To achieve this, we use a GAN to learn areas of paths successfully planned by the RRT* algorithm in the past to predict promising areas in the new map.
+
+After obtaining the predicted promising region, we use the RRT* algorithm for path planning in this region.
+The RRT* algorithm is a path planning algorithm based on random trees, which can quickly find a reasonable path in a complex environment. 
+In this study, we use the RRT* algorithm to quickly find plausible paths within predicted promising regions. 
+Finally, we take the obtained path as the output of the proposed algorithm.
+
+We hope that the method of this research can improve the efficiency and quality of robot path planning in complex environments.
+
+\begin{algorithm}
+	\caption{Enhanced RRT* with Clustering and Presearching (ERCP)}
+	\label{algorithm: ercp-RRT*}
+	\hspace*{0.02in} {\bf Input:} $\bm{\chi}, \bm{\chi}_{\textrm{obs}}, x_{\textrm{sou}}, x_{\textrm{tar}}, \bm{\chi}_{\textrm{opt}}, r$ \\
+	\hspace*{0.02in} {\bf Output:} $T$
+	\begin{algorithmic}[1]
+		\State $\mathcal{M} \leftarrow Generator(\bm{\chi}, \bm{\chi}_{\textrm{obs}}, x_{\textrm{sou}}); $
+		\State $T = (\mathbf{N}, r, p) \leftarrow (\emptyset, x_{\textrm{sou}}, \emptyset) ;$
+		\State $\bm{\chi}_{\textrm{tar}} \leftarrow \{x \in \bm{\chi}_{\textrm{fre}} \vert \lVert x - x_{\textrm{tar}} \rVert < r\} ;$
+		\For {$i \in \{1, 2, \dots, k\}$}
+			\State $x_{\textrm{ran}} \leftarrow SampleFrom(\bm{\chi}_{\textrm{opt}}) ;$
+			\State $x_{\textrm{nst}} \leftarrow Nearest(x_{\textrm{ran}}) ;$
+			\State $x_{\textrm{new}} \leftarrow Steer(x_{\textrm{nst}}, x_{\textrm{ran}}) ;$
+
+			\If {$obstacleFree(x_{\textrm{nst}}, x_{\textrm{new}})$}
+				\State $\mathbf{N} \leftarrow \mathbf{N} \cup x_{\textrm{new}} ;$
+				\State $p(x_{\textrm{new}}) = x_{\textrm{nst}} ;$
+				\State $X_{\textrm{nea}} \leftarrow NearestNeighborSearch(T, r) ;$
+				\State $T \leftarrow Rewiring(X_{\textrm{nea}}, x_{\textrm{new}}) ;$
+				\If{$x_{\textrm{sou}} \in \bm{\chi}_{\textrm{tar}}$ }
+					\State Return $T ;$
+				\EndIf
+			\EndIf
+			%\EndIF
+		\EndFor
+		\State Return $failure ;$
+	\end{algorithmic}
+\end{algorithm}
+
+\section{Experiments}\label{section: Experiments}
+In terms of dataset, we use 20 initial maps and generate 200 different maps through data augmentation. 
+Then for each map, randomly select 100 pairs of start and end points, use RRT to find feasible paths among them, 50 successful paths form the promising areas of the map, and finally generate 20,000 sets of data.
+
+In terms of training, we use 16,000 sets of data as training tests, the ratio of training and testing is 4:1, and another 4,000 sets of untrained data are used to evaluate the generalization ability of the model.
+
+In terms of evaluating model performance, we compare our model with the three most popular algorithms (RRT*, IRRT*, SaGan). 
+Among them, IRRT* realizes the heuristic search of ellipse in the path planning process, which speeds up its convergence to the optimal solution. 
+SaGan learns the features of maps and promising regions through residuals and attention, thus giving promising regions between different starting and ending points.
+
+We use windows10 as the training and testing platform of the model, the CPU is AMD Ryzen-7 4800H, the graphics card is RTX 2060 6g, and the memory is 16g. 
+In terms of software, the model implementation language is python3.8, and the deep learning framework is pytorch 1.12.1.
+
+\subsection{Dataset}
+\begin{figure}
+\centering
+\includegraphics[scale=0.45]{data-set.pdf}%%%%%%%%%%%%%%%%scale=缩小比例，或者用width=2in
+\caption{Data set}     
+\label{fig:data-set}
+\end{figure}
+
+As shown in the figure, it shows a set of data for each map. 
+The first line is the initial map, and the black part is the obstacle. 
+The second row is a random start and end point, the blue point is the start point, and the red point is the end point. 
+The green areas in the third row of pictures are promising areas.
+
+\subsection{Training Details}
+In all 20,000 datasets, the number of training and testing datasets is 16,000, and the ratio of training and testing sets is 4:1. 
+The number of training rounds is 10 rounds, the learning rate of the generator is 0.0001, the learning rate of the discriminator is 0.00005, and the batch size is 16.
+
+\subsection{Evaluate model performance}
+95.08\%
+
+\subsection{Initial path quality}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.45]{costs.pdf}%%%%%%%%%%%%%%%%scale=缩小比例，或者用width=2in
+\caption{costs}     
+\label{fig:costs}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.45]{nodes_taken.pdf}%%%%%%%%%%%%%%%%scale=缩小比例，或者用width=2in
+\caption{nodes}     
+\label{fig:nodes}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.45]{time.pdf}%%%%%%%%%%%%%%%%scale=缩小比例，或者用width=2in
+\caption{time}     
+\label{fig:time}
+\end{figure}
+
+\subsection{Optimal Path Quality}
+
+\subsection{Discussion}
+
+\section{Conclusion and further work}\label{section: conclusions}
+
+\begin{acknowledgements}
+
+\end{acknowledgements}
+
+\section*{Data availability statement}
+Data will be available upon reasonable request.
+
+\bibliographystyle{splncs}
+
+\bibliography{main}
+
+\end{document}

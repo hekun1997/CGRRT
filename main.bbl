@@ -1,0 +1,32 @@
+\begin{thebibliography}{1}
+
+\bibitem{dijkstra1959note}
+Dijkstra, E.W.:
+\newblock A note on two problems in connexion with graphs.
+\newblock Numerische Mathematik \textbf{1}(1) (1959)  269--271
+
+\bibitem{hart1968formal}
+Hart, P.E., Nilsson, N.J., Raphael, B.:
+\newblock A formal basis for the heuristic determination of minimum cost paths.
+\newblock IEEE Transactions on Systems Science and Cybernetics \textbf{4}(2)
+  (1968)  100--107
+
+\bibitem{lavalle2001rapidly}
+LaValle, S.M., Kuffner, J.J.:
+\newblock Rapidly-exploring random trees: Progress and prospects.
+\newblock International Journal of Robotics Research \textbf{20}(5) (2001)
+  378--400
+
+\bibitem{karaman2011sampling}
+Karaman, S., Frazzoli, E.:
+\newblock {Sampling-based Algorithms for Optimal Motion Planning}.
+\newblock The International Journal of Robotics Research \textbf{30}(7) (2011)
+  846--894
+
+\bibitem{kuffner2000randomized}
+Kuffner, J.J., LaValle, S.M.:
+\newblock Randomized kinodynamic planning.
+\newblock In: IEEE International Conference on Robotics and Automation, IEEE
+  (2000)  1277--1283
+
+\end{thebibliography}
