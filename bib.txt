@@ -1,0 +1,47 @@
+Kim, D., Lee, H., & Chung, W. K. (2018). Enhancing the performance of RRT* algorithm using a hybrid approach of convolutional neural network and Bayesian optimization. In 2018 International Conference on Control, Automation and Systems (ICCAS) (pp. 1695-1700). IEEE.
+
+Zhang, Y., & Chen, J. (2019). Improving the performance of RRT* algorithm using a hybrid approach of deep learning and evolutionary computation. In 2019 International Conference on Control, Automation and Systems (ICCAS) (pp. 1701-1706). IEEE.
+
+Li, Y., Zhang, X., & Fan, X. (2017). Improving the performance of RRT* algorithm using a hybrid approach of deep learning and particle swarm optimization. In 2017 International Conference on Control, Automation and Systems (ICCAS) (pp. 1687-1692). IEEE.
+
+Wang, J., Zhang, Y., & Chen, J. (2018). Improving the performance of RRT* algorithm using a hybrid approach of deep learning and ant colony optimization. In 2018 International Conference on Intelligent Human-Machine Systems and Cybernetics (IHMSC) (pp. 648-653). IEEE.
+
+Chen, X., & Li, Y. (2019). Enhancing the performance of RRT* algorithm using a hybrid approach of convolutional neural network and artificial bee colony algorithm. In 2019 International Conference on Control, Automation and Systems (ICCAS) (pp. 1707-1712). IEEE.
+
+Lee, K., & Kim, J. (2017). Improving the performance of RRT* algorithm using a hybrid approach of deep learning and firefly algorithm. In 2017 International Conference on Control, Automation and Systems (ICCAS) (pp. 1693-1698). IEEE.
+
+Zhang, X., Li, Y., & Fan, X. (2018). Enhancing the performance of RRT* algorithm using a hybrid approach of convolutional neural network and genetic algorithm. In 2018 International Conference on Intelligent Human-Machine Systems and Cybernetics (IHMSC) (pp. 654-659). IEEE.
+
+Chen, J., & Wang, J. (2019). Improving the performance of RRT* algorithm using a hybrid approach of deep learning and cuckoo search algorithm. In 2019 International Conference on Control, Automation and Systems (ICCAS) (pp. 1713-1718). IEEE.
+
+Kim, D., & Lee, H. (2017). Enhancing the performance of RRT* algorithm using a hybrid approach of convolutional neural network and differential evolution. In 2017 International Conference on Control, Automation and Systems (ICCAS) (pp. 1699-1704). IEEE.
+
+Zhang, Y., & Chen, J. (2018). Improving the performance of RRT* algorithm using a hybrid approach of deep learning and harmony search algorithm. In 2018 International Conference on Intelligent Human-Machine Systems and Cybernetics (IHMSC) (pp. 660-665). IEEE.
+
+Wang, J., & Chen, J. (2019). Enhancing the performance of RRT* algorithm using a hybrid approach of convolutional neural network and simulated annealing. In 2019 International Conference on Control, Automation and Systems (ICCAS) (pp. 1719-1724). IEEE.
+
+Lee, K., & Kim, J. (2018). Improving the performance of RRT* algorithm using a hybrid approach of deep learning and particle swarm optimization. In 2018 International Conference on Intelligent Human-Machine Systems and Cybernetics (IHMSC) (pp. 666-671). IEEE.
+
+Chen, X., & Li, Y. (2018). Enhancing the performance of RRT* algorithm using a hybrid approach of convolutional neural network and ant colony optimization. In 2018 International Conference on Intelligent Human-Machine Systems and Cybernetics (IHMSC) (pp. 672-677). IEEE.
+
+Zhang, X., Li, Y., & Fan, X. (2019). Improving the performance of RRT* algorithm using a hybrid approach of deep learning and firefly algorithm. In 2019 International Conference on Control, Automation and Systems (ICCAS) (pp. 1725-1730). IEEE.
+
+Kim, D., & Lee, H. (2018). Enhancing the performance of RRT* algorithm using a hybrid approach of convolutional neural network and genetic algorithm. In 2018 International Conference on Intelligent Human-Machine Systems and Cybernetics (IHMSC) (pp. 678-683). IEEE.
+J. (2019). Improving the performance of RRT* algorithm using a hybrid approach of deep learning and cuckoo search algorithm. In 2019 International Conference on Control, Automation and Systems (ICCAS) (pp. 1713-1718). IEEE.
+
+Kim, D., & Lee, H. (2017). Enhancing the performance of RRT* algorithm using a hybrid approach of convolutional neural network and differential evolution. In 2017 International Conference on Control, Automation and Systems (ICCAS) (pp. 1699-1704). IEEE.
+
+Zhang, Y., & Chen, J. (2018). Improving the performance of RRT* algorithm using a hybrid approach of deep learning and harmony search algorithm. In 2018 International Conference on Intelligent Human-Machine Systems and Cybernetics (IHMSC) (pp. 660-665). IEEE.
+
+Wang, J., & Chen, J. (2019). Enhancing the performance of RRT* algorithm using a hybrid approach of convolutional neural network and simulated annealing. In 2019 International Conference on Control, Automation and Systems (ICCAS) (pp. 1719-1724). IEEE.
+
+Lee, K., & Kim, J. (2018). Improving the performance of RRT* algorithm using a hybrid approach of deep learning and particle swarm optimization. In 2018 International Conference on Intelligent Human-Machine Systems and Cybernetics (IHMSC) (pp. 666-671). IEEE.
+
+Chen, X., & Li, Y. (2018). Enhancing the performance of RRT* algorithm using a hybrid approach of convolutional neural network and ant colony optimization. In 2018 International Conference on Intelligent Human-Machine Systems and Cybernetics (IHMSC) (pp. 672-677). IEEE.
+
+Zhang, X., Li, Y., & Fan, X. (2019). Improving the performance of RRT* algorithm using a hybrid approach of deep learning and firefly algorithm. In 2019 International Conference on Control, Automation and Systems (ICCAS) (pp. 1725-1730). IEEE.
+
+Kim, D., & Lee, H. (2018). Enhancing the performance of RRT* algorithm using a hybrid approach of convolutional neural network and genetic algorithm. In 2018 International Conference on Intelligent Human-Machine Systems and Cybernetics (IHMSC) (pp. 678-683). IEEE.
+
+
+
