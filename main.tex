@@ -160,6 +160,23 @@ The path planning problem is to find an optimal path
 	\bm{\sigma}^* = \mathop{\arg\min} \limits_{\bm{\sigma}} c(\bm{\sigma}).
 \end{equation}
 
+\subsection{GAN}
+GAN consists of two components: a generator and a discriminator.
+The generator generates an image $G_\theta (z)$ using noise $\textbf{z}$ from the noise space $\textbf{z} \in \mathbb{R}^n $.
+The discriminator generates an image $G_\theta (z)$ using data $\textbf{x}$ from data space $\textbf{x} \in \textbf{X}$.
+The generator and discriminator can be thought of as playing a game:
+The generator is trained to generate samples that are as realistic as possible, while the discriminator is trained to correctly classify samples as real or fake.
+The generator and discriminator networks are trained alternately, with the generator network trying to fool the discriminator, and the discriminator network trying to classify the samples correctly.
+The objective function of Gan can be expressed as:
+
+\begin{equation}\label{equation: objective funtion-gan}
+	\min_{\theta} \max_{\phi} ( \mathbb{E}_{\mathbf{x} \sim \textbf{p}_{\textrm{data}}}[\log D_\phi(\textbf{x})] + 
+	\mathbb{E}_{\mathbf{z} \sim p(\textbf{z})}[\log (1-D_\phi(G_\theta(\textbf{z})))] )
+\end{equation}
+
+
+
+
 \subsection{RRT*}\label{subsection: rrt-star}
 Among the sampling-based algorithms, RRT* is one of the representative algorithms that are widely used.
 RRT* explores the \emph{state space} by expanding space-filling trees
