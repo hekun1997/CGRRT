@@ -34,7 +34,7 @@
 
 \begin{document}
 
-\title{Boosting RRT* with GAN Predictions}
+\title{Boosting path planning with GAN Predictions}
 
 \author{Kun He and Fan Min*\thanks{Corresponding author. E-mail: minfan@swpu.edu.cn (Fan Min).} }
 
@@ -164,9 +164,11 @@ The path planning problem is to find an optimal path
 GAN consists of two components: a generator and a discriminator.
 The generator generates an image $G_\theta (z)$ using noise $\textbf{z}$ from the noise space $\textbf{z} \in \mathbb{R}^n $.
 The discriminator generates an image $G_\theta (z)$ using data $\textbf{x}$ from data space $\textbf{x} \in \textbf{X}$.
+
 The generator and discriminator can be thought of as playing a game:
 The generator is trained to generate samples that are as realistic as possible, while the discriminator is trained to correctly classify samples as real or fake.
 The generator and discriminator networks are trained alternately, with the generator network trying to fool the discriminator, and the discriminator network trying to classify the samples correctly.
+
 The objective function of Gan can be expressed as:
 
 \begin{equation}\label{equation: objective funtion-gan}
@@ -174,6 +176,7 @@ The objective function of Gan can be expressed as:
 	\mathbb{E}_{\mathbf{z} \sim p(\textbf{z})}[\log (1-D_\phi(G_\theta(\textbf{z})))] )
 \end{equation}
 
+The loss function of Gan can be expressed as:
 
 
 
@@ -199,12 +202,9 @@ where
 In this section, we first describe the implementation of CGRRT.
 Then, we prove the probabilistic completeness of CGRRT.
 
-\subsection{dateset}
-We generated 20 maps with different complexity, and expanded the original dataset to 200 maps after translation and rotation of obstacles in the maps. 
-By randomly selecting the start and end points in the map, and then using RRT to perform 50 random iterations in this state space, collecting paths that successfully connect the start and end points constitutes a promising region between the start and end points.
-
 \subsection{network structure}
-\subsection{Dataset}
+
+
 \begin{figure}
 \centering
 \includegraphics[scale=0.3]{network-CGGenerator.pdf}%%%%%%%%%%%%%%%%scale=缩小比例，或者用width=2in
@@ -214,7 +214,7 @@ By randomly selecting the start and end points in the map, and then using RRT to
 
 \begin{figure}
 \centering
-\includegraphics[scale=0.4]{network-CGDiscriminator.pdf}%%%%%%%%%%%%%%%%scale=缩小比例，或者用width=2in
+\includegraphics[scale=0.3]{network-CGDiscriminator.pdf}%%%%%%%%%%%%%%%%scale=缩小比例，或者用width=2in
 \caption{discriminator}     
 \label{fig:discriminator}
 \end{figure}
@@ -235,8 +235,6 @@ If the generator network is too weak, it will not be able to synthesize real sam
 To solve this problem, GANs use specific objective and loss functions to guide the training process.
 The objective function of GAN is usually defined as a min-max game, where the generator network tries to minimize the loss function, while the discriminator network tries to maximize the loss function.
 The loss function is usually defined as binary cross-entropy loss, which measures the difference between the predicted label (true or fake) and the ground truth label.
-
-\subsubsection{Loss Function}
 
 
 \subsection{GAN-RRT*}
@@ -297,46 +295,90 @@ In terms of software, the model implementation language is python3.8, and the de
 \begin{figure}
 \centering
 \includegraphics[scale=0.45]{data-set.pdf}%%%%%%%%%%%%%%%%scale=缩小比例，或者用width=2in
-\caption{Data set}     
+\caption{A display of the original map.
+On the left is the map name.
+The first column is the original map.
+The second column is the data including the starting point and ending point, and the promising area.
+The third column is the individual start and end points.
+The fourth column is for individual promising regions.
+The black parts are obstacles.
+The blue dot is the starting point and the red dot is the end point.
+Green areas are promising areas.
+}     
 \label{fig:data-set}
 \end{figure}
 
-As shown in the figure, it shows a set of data for each map. 
-The first line is the initial map, and the black part is the obstacle. 
-The second row is a random start and end point, the blue point is the start point, and the red point is the end point. 
-The green areas in the third row of pictures are promising areas.
+We generated 20 maps of varying complexity, as shown in the figure.
+In order to enhance the generalization ability of the model, each map translates and rotates the obstacles to generate 9 extended maps.
+The final map dataset is 200 maps.
+
+By randomly selecting the start and end points in the map, use RRT to perform 50 random iterations in this map, and collect paths that successfully connect the start and end points to form promising regions.
+
+As shown, it shows a set of data for each map.
+On the far left of the map is the name of the map.
+The first column is a map with only obstacles, the black parts are obstacles.
+The second column contains obstacles, start and end points, and promising areas.
+The blue dot is the start point and the red dot is the end point.
+Green areas are promising areas.
+The third column of pictures is the start and end points extracted separately from the picture on the left.
+The pictures in the fourth column are promising regions.
+
+The purpose of extracting the starting point, ending point and promising area separately is to facilitate data processing.
 
 \subsection{Training Details}
 In all 20,000 datasets, the number of training and testing datasets is 16,000, and the ratio of training and testing sets is 4:1. 
 The number of training rounds is 10 rounds, the learning rate of the generator is 0.0001, the learning rate of the discriminator is 0.00005, and the batch size is 16.
 
 \subsection{Evaluate model performance}
-95.08\%
+The quality of the generated promising regions is the key to evaluate the performance of our model.
+We will evaluate the model in this paper from two aspects. One is to judge the quality of the generated promising regions through connectivity, that is, whether the promising regions can continuously connect the starting point and the ending point.
+On the other hand, it is the generalization ability of the model. We will use the four untrained base maps, input them into the model, and judge the generalization ability through connectivity.
+
+After testing, in the trained map, using the promising regions obtained from the test set, the overall connectivity is 95.08\%.
 
 \subsection{Initial path quality}
+As a path planning problem, we evaluate the performance of the algorithm from three main indicators and two aspects.
+The main indicators include the path cost, the number of sampling nodes, and the time consumed.
+Two aspects include the main indicators of the initial path and the optimal path.
+We will conduct multiple experiments on different maps to demonstrate the superiority of our algorithm.
 
-\begin{figure}
-\centering
-\includegraphics[scale=0.45]{costs.pdf}%%%%%%%%%%%%%%%%scale=缩小比例，或者用width=2in
-\caption{costs}     
-\label{fig:costs}
+Figure \ref{fig:initial path quality} shows the quality of the initial path obtained on different maps, the number of samples and the time consumed.
+
+Figure \ref{fig: costs} shows the quality of the initial path, the horizontal axis represents different maps, and the vertical axis represents the quality of the path. The boxplots in light blue represent RRT* and bright green represent our algorithm.
+It can be seen from the figure that the path quality of B-RRT* is overall better than that of RRT*.
+
+\begin{figure}[h!]
+	\centering
+	\subfigure[costs]{
+		\begin{minipage}[t]{0.3\linewidth}
+		\centering
+		\includegraphics[width=1\linewidth]{costs.pdf}
+		\end{minipage}
+		\label{fig: costs}
+	}
+	\subfigure[nodes taken.]{
+		\begin{minipage}[t]{0.3\linewidth}
+		\centering
+		\includegraphics[width=1\linewidth]{nodes_taken.pdf}
+		\end{minipage}%
+		\label{fig: nodes_taken}
+	}
+	\subfigure[time.]{
+		\begin{minipage}[t]{0.3\linewidth}
+		\centering
+		\includegraphics[width=1\linewidth]{time.pdf}
+		\end{minipage}
+		\label{fig: time}
+	}
+	\caption{
+	Illustration of initial path quality.}
+	\label{fig:initial path quality}
 \end{figure}
 
-\begin{figure}
-\centering
-\includegraphics[scale=0.45]{nodes_taken.pdf}%%%%%%%%%%%%%%%%scale=缩小比例，或者用width=2in
-\caption{nodes}     
-\label{fig:nodes}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[scale=0.45]{time.pdf}%%%%%%%%%%%%%%%%scale=缩小比例，或者用width=2in
-\caption{time}     
-\label{fig:time}
-\end{figure}
 
 \subsection{Optimal Path Quality}
+
+
 
 \subsection{Discussion}
 

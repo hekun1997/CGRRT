@@ -1,1 +1,39 @@
 GAN理论 ：https://deepgenerativemodels.github.io/notes/gan/
+
+#todo_list
+
+related work
+找相关的论文，总结，大概15篇的样子。
+
+Preliminaries
+以另一种说法重写一遍。
+
+3.2 Gan
+GAN 描述不够细致
+objective function 公式中的各个部分没有介绍到
+损失函数
+
+4.1 network structure
+网络结构描述
+网络结构图片的输入输出，连接各个层面的修改
+
+4.2 GAN-RRT* 
+算法的修改，
+算法的描述，
+证明更优
+
+5.1 Dataset
+照着图片描述
+
+5.4 Initial path quality
+
+5.5 Optimal Path Quality
+三张图片的生成
+
+5.6 Discussion
+上述三部分的文字描述
+
+
+fig
+图片的描述修改
+
