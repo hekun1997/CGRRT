@@ -1,4 +1,4 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 
 \bibitem{dijkstra1959note}
 Dijkstra, E.W.:
@@ -28,5 +28,38 @@ Kuffner, J.J., LaValle, S.M.:
 \newblock Randomized kinodynamic planning.
 \newblock In: IEEE International Conference on Robotics and Automation, IEEE
   (2000)  1277--1283
+
+\bibitem{kuffner2000rrt}
+Kuffner, J.J., LaValle, S.M.:
+\newblock Rrt-connect: An efficient approach to single-query path planning.
+\newblock In: Proceedings 2000 ICRA. Millennium Conference. IEEE International
+  Conference on Robotics and Automation. Symposia Proceedings (Cat. No.
+  00CH37065). Volume~2., IEEE (2000)  995--1001
+
+\bibitem{2014irrt}
+Gammell, J.D., Srinivasa, S.S., Barfoot, T.D.:
+\newblock {Informed RRT*: Optimal Sampling-based Path Planning Focused via
+  Direct Sampling of An Admissible Ellipsoidal Heuristic}.
+\newblock In: IEEE/RSJ International Conference on Intelligent Robots and
+  Systems. (2014)  2997--3004
+
+\bibitem{WANG2021114541}
+Wang, J., Li, B., Meng, M.Q.H.:
+\newblock {Kinematic Constrained Bi-directional RRT with Efficient Branch
+  Pruning for Robot Path Planning}.
+\newblock Expert Systems with Applications \textbf{170} (2021)  114541
+
+\bibitem{2020Neural}
+Wang, J., Chi, W., Li, C., Wang, C., Meng, M.Q.H.:
+\newblock {Neural RRT*: Learning-Based Optimal Path Planning}.
+\newblock IEEE Transactions on Automation Science and Engineering
+  \textbf{17}(4) (2020)  1748--1758
+
+\bibitem{NIPS2014_5ca3e9b1}
+Goodfellow, I., Pouget-Abadie, J., Mirza, M., Xu, B., Warde-Farley, D., Ozair,
+  S., Courville, A., Bengio, Y.:
+\newblock {Generative Adversarial Nets}.
+\newblock In: Conference and Workshop on Neural Information Processing Systems.
+  (2014)
 
 \end{thebibliography}

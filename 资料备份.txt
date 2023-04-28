@@ -22,11 +22,6 @@ objective function 公式中的各个部分没有介绍到
 算法的描述，
 证明更优
 
-5.1 Dataset
-照着图片描述
-
-5.4 Initial path quality
-
 5.5 Optimal Path Quality
 三张图片的生成
 
@@ -37,3 +32,5 @@ objective function 公式中的各个部分没有介绍到
 fig
 图片的描述修改
 
+实验
+IRRT*
